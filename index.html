@@ -56,13 +56,8 @@
   <div>もう一度"次のターン"ボタンを押すと今回のターンの操作を適用したフィールドが表示されます</div>
   <div>指定したターン数が終了するまで操作を繰り返します</div>
 
-  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script type="text/javascript" src="kakomimasu-client.js"></script>
-  <script language="javascript" type="text/javascript">
-    start();
-  </script>-->
-  <script type="text/javascript" src="kakomimasu-client.js"></script>
-  <script type="text/javascript" src="module.js"></script>
+  <script type="text/javascript" src="./js/kakomimasu-client.js"></script>
+  <script type="text/javascript" src="./js/module.js"></script>
   <script language="javascript" type="text/javascript">
     const kkmm = new Kakomimasu();
 
@@ -94,7 +89,6 @@
       max = queries["max"];
 
     kkmm.endTurn = endTurn;
-
     document.getElementById("turnNumber").innerHTML = endTurn;
 
     //ポイントの生成
@@ -261,7 +255,10 @@
     width: 800px;
   }
   #agent_cell{
-    background-image: url(./agent.png);
+    background-image: url(./assets/agent.png);
     background-size: contain;
+  }
+  @media (min-aspect-ratio: 5/10) {
+  /* スマホのときのCSS */
   }
 </style>

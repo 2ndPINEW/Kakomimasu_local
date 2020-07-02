@@ -71,9 +71,9 @@
 
     let endTurn = 10;
 
-    let min = -9;
+    let min = -18;
     let max = 9;
-    let positiveRatio = 50;
+    let positiveRatio = 85;
 
     if(queries["w"] != null)
       w = queries["w"];
@@ -87,16 +87,21 @@
       min= queries["min"];
     if(queries["max"] != null)
       max = queries["max"];
+    if(queries["positiveRatio"] != null)
+      positiveRatio = queries["positiveRatio"];
 
     kkmm.endTurn = endTurn;
     document.getElementById("turnNumber").innerHTML = endTurn;
 
     //ポイントの生成
     const points = [];
-    for(let i = 0; i< w; i++){
+    for(let i = 0; i< h; i++){
       var tmp = new Array(w);
       for(let j = 0; j< w; j++){
-        tmp[j] = getRandomInt(min, max, positiveRatio);
+        if(i == 0 || j == 0 || i == h - 1 || j == w - 1)
+          tmp[j] = getRandomInt(min, max, 100);
+        else
+          tmp[j] = getRandomInt(min, max, positiveRatio);
       }
       points.push(tmp);
     }
@@ -258,7 +263,8 @@
     background-image: url(./assets/agent.png);
     background-size: contain;
   }
-  @media (min-aspect-ratio: 5/10) {
-  /* スマホのときのCSS */
+  input{
+    width: 100px;
+    height: 50px;
   }
 </style>

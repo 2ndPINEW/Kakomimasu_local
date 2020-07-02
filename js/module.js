@@ -1,9 +1,11 @@
 function getRandomInt(min, max, positiveRatio) {
-  min = Math.ceil(min);
-  max = Math.floor(max) + 1;
   if(probability(positiveRatio)){
-    return Math.abs(Math.floor(Math.random() * (max - min)) + min);
+    min = Math.ceil(0);
+    max = Math.floor(max) + 1;
+    return Math.floor(Math.random() * (max - min)) + min;
   }else{
+    min = Math.ceil(min);
+    max = Math.floor(0);
     return Math.floor(Math.random() * (max - min)) + min;
   }
 }

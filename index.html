@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>kakomimasu</title>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+        <h4 id ='maintable'></h4>
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td><h4>操作モード</h4></td>
+            <td><h4 id = "mode">NONE</h4></td>
+          </tr>
+          <tr>
+            <td><h4>ターン</h4></td>
+            <td><h4 id = "turnPlayerName"></h4></td>
+          </tr>
+          <tr>
+            <td><h4>残りターン数</h4></td>
+            <td><h4 id = "turnNumber">Start</h4></td>
+          </tr>
+          <tr>
+            <td><h4>操作したコマの数</h4></td>
+            <td><h4 id = "numberOfOperations">0</h4></td>
+          </tr>
+          <tr>
+            <td><h4 id = "p1Name"></h4></td>
+            <td><h4 id = "p1Score">0</h4></td>
+          </tr>
+          <tr>
+            <td><h4 id = "p2Name"></h4></td>
+            <td><h4 id = "p2Score">0</h4></td>
+          </tr>
+          <tr>
+            <td><h4>メッセージ</h4></td>
+            <td><h4 id = "message">Welcom</h4></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  <input type="button" value="PUT" id="putModeSelectButton"/>
+  <input type="button" value="MOVE" id="moveModeSelectButton"/>
+  <input type="button" value="REMOVE" id="removeModeSelectButton"/>
+  <input type="button" value="NONE" id="noneModeSelectButton"/>
+  <input type="button" value="次のターン" id="nextTurnButton"/>
+  <div>遊び方</div>
+  <div>1Pの人が操作して、操作完了後に"次のターン"ボタンを押して2Pに渡します</div>
+  <div>2Pの人が操作した後に"次のターン"ボタンを押すと前回のターン終了時のフィールドが表示されます</div>
+  <div>もう一度"次のターン"ボタンを押すと今回のターンの操作を適用したフィールドが表示されます</div>
+  <div>指定したターン数が終了するまで操作を繰り返します</div>
+
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="kakomimasu-client.js"></script>
+  <script language="javascript" type="text/javascript">
+    start();
+  </script>-->
+  <script type="text/javascript" src="kakomimasu-client.js"></script>
+  <script type="text/javascript" src="module.js"></script>
+  <script language="javascript" type="text/javascript">
+    const kkmm = new Kakomimasu();
+
+    let querie = getUrlQueries();
+
+    //フィールドサイズ
+    let w = 8;
+    let h = 8;
+    //エージェントの数
+    let nAgent = 6;
+
+    let endTurn = 10;
+
+    let min = -9;
+    let max = 9;
+    let positiveRatio = 50;
+
+    if(queries["w"] != null)
+      w = queries["w"];
+    if(queries["h"] != null)
+      h = queries["h"];
+    if(queries["nAgent"] != null)
+      nAgent = queries["nAgent"];
+    if(queries["endTurn"] != null)
+      endTurn = queries["endTurn"];
+    if(queries["min"] != null)
+      min= queries["min"];
+    if(queries["max"] != null)
+      max = queries["max"];
+
+    kkmm.endTurn = endTurn;
+
+    document.getElementById("turnNumber").innerHTML = endTurn;
+
+    //ポイントの生成
+    const points = [];
+    for(let i = 0; i< w; i++){
+      var tmp = new Array(w);
+      for(let j = 0; j< w; j++){
+        tmp[j] = getRandomInt(min, max, positiveRatio);
+      }
+      points.push(tmp);
+    }
+
+    //ボードの生成
+    const board = new Board(w, h, points);
+    kkmm.appendBoard(board);
+    kkmm.createField(onTableClick, onMouseMove, onMouseOut);
+
+    //プレイヤーとエージェントの生成
+    const p1 = new Player(1, "1P");
+    const p2 = new Player(2, "2P");
+    document.getElementById("turnPlayerName").innerHTML = p1.name;
+    document.getElementById("p1Name").innerHTML = p1.name + " スコア";
+    document.getElementById("p2Name").innerHTML = p2.name + " スコア";
+    for(let i = 0; i<nAgent*2; i+=2){
+      let agent = new Agent(p1.uuid, i, 0);
+      kkmm.board.field.appendAgent(agent);
+      agent = new Agent(p2.uuid, i+1, 1);
+      kkmm.board.field.appendAgent(agent);
+    }
+
+    kkmm.startGame();
+
+
+    function onTableClick(argEnv){
+      if(!kkmm.gaming) return;
+      var message = '';
+      var wElement = (argEnv.srcElement || argEnv.target);
+      if (wElement.tagName.toUpperCase() == 'TD'){
+        var y = wElement.parentNode.sectionRowIndex;
+        var x = wElement.cellIndex;
+        message += "(X: " + x + ", Y: " + y + ") ";
+
+        if(kkmm.board.operatingMode == actions.PUT){
+          if(kkmm.board.put(x, y, kkmm.turnPlayerIndex, kkmm.turnNumber)){
+            message += "にエージェント配置";
+          }
+          else{
+            message += "にエージェント配置不可";
+          }
+        }
+        else if(kkmm.board.operatingMode == actions.MOVE){
+          if(kkmm.board.selectMoveSource(x, y, kkmm.turnPlayerIndex, kkmm.turnNumber)){
+            message += "からエージェント移動";
+          }
+          else{
+            message += "から移動不可";
+          }
+        }
+        else if(kkmm.board.operatingMode == actions.MOVING){
+          if(kkmm.board.move(x, y, kkmm.turnNumber, kkmm.turnPlayerIndex)){
+            message += "にエージェント移動";
+          }
+          else{
+            message += "に移動不可";
+          }
+        }
+        else if(kkmm.board.operatingMode == actions.REMOVE){
+          if(kkmm.board.remove(x, y, kkmm.turnPlayerIndex, kkmm.turnNumber)){
+            message += "を排除";
+          }
+          else{
+            message += "は排除不可";
+          }
+        }
+        else if(kkmm.board.operatingMode == actions.REMOVEAGENTSELECT){
+          if(kkmm.board.selectRemoveExecAgent(x, y, kkmm.turnPlayerIndex, kkmm.turnNumber)){
+            message += "のエージェントが排除";
+          }
+          else{
+            message += "のマスからは排除不可";
+          }
+        }
+
+        document.getElementById("message").innerHTML = message;
+      }
+
+      document.getElementById("numberOfOperations").innerHTML =
+        kkmm.board.field.numberOfMovedAgents(kkmm.turnPlayerIndex, kkmm.turnNumber);
+    }
+
+    //マウス移動時にモードに合わせた表示を行う
+    function onMouseMove(argEnv){
+      if(!kkmm.gaming) return;
+      var wElement = (argEnv.srcElement || argEnv.target);
+      if (wElement.tagName.toUpperCase() == 'TD'){
+        var x = wElement.cellIndex;
+        var y = wElement.parentNode.sectionRowIndex;
+        if(kkmm.board.operatingMode == actions.MOVE)
+          kkmm.board.showCanMoveArea(x, y, kkmm.turnPlayerIndex, kkmm.turnNumber);
+        if(kkmm.board.operatingMode == actions.PUT)
+          kkmm.board.showCanPutArea(x, y, kkmm.turnPlayerIndex);
+        if(kkmm.board.operatingMode == actions.REMOVE)
+          kkmm.board.showCanRemoveArea(x, y, kkmm.turnPlayerIndex, kkmm.turnNumber);
+      }
+    }
+
+    function onMouseOut(argEnv){
+      if(kkmm.board.operatingMode == actions.MOVING ||
+        kkmm.board.operatingMode == actions.REMOVEAGENTSELECT
+      )
+        return;
+      kkmm.board.resetAllTileColor();
+    }
+
+    document.getElementById("putModeSelectButton").onclick = function putMode(){
+      document.getElementById("mode").innerHTML = "PUT";
+      kkmm.board.updateOperatingMode(actions.PUT);
+    }
+
+    document.getElementById("moveModeSelectButton").onclick = function moveMode(){
+      document.getElementById("mode").innerHTML = "MOVE";
+      kkmm.board.updateOperatingMode(actions.MOVE);
+    }
+
+    document.getElementById("removeModeSelectButton").onclick = function removeMode(){
+      document.getElementById("mode").innerHTML = "REMOVE";
+      kkmm.board.updateOperatingMode(actions.REMOVE);
+    }
+
+    document.getElementById("noneModeSelectButton").onclick = function noneMode(){
+      document.getElementById("mode").innerHTML = "NONE";
+      kkmm.board.updateOperatingMode(actions.NONE);
+    }
+
+    document.getElementById("nextTurnButton").onclick = function nextTurn(){
+      kkmm.nextTurn(p1, p2);
+      document.getElementById("numberOfOperations").innerHTML =
+        kkmm.board.field.numberOfMovedAgents(kkmm.turnPlayerIndex, kkmm.turnNumber);
+    }
+  </script>
+</body>
+</html>
+
+<style>
+  td{
+    border: solid 1px;
+  }
+
+  tr{
+    text-align: center;
+  }
+
+  table{
+    border: solid 1px;
+    border-collapse: collapse;
+    width: 500px;
+    height: 300px;
+  }
+  table.field{
+    border: solid 1px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    height: 800px;
+    width: 800px;
+  }
+  #agent_cell{
+    background-image: url(./agent.png);
+    background-size: contain;
+  }
+</style>

@@ -424,12 +424,14 @@ class Board{
     if(playerIndex == 0){
       if(this.field.tiles[y][x] != fieldNumber.p1Agent){
         this.operatingMode = actions.REMOVE;
+        this.resetAllTileColor();
         return false;
       }
     }
     if(playerIndex == 1){
       if(this.field.tiles[y][x] != fieldNumber.p2Agent){
         this.operatingMode = actions.REMOVE;
+        this.resetAllTileColor();
         return false;
       }
     }
@@ -439,8 +441,10 @@ class Board{
     if(agentId != null)
       agentIndex = this.field.agentIndexFromId(agentId);
 
-    if(this.field.agents[agentIndex].lastActionTurn == turnNumber)
+    if(this.field.agents[agentIndex].lastActionTurn == turnNumber){
+      this.resetAllTileColor();
       return false;
+    }
 
     //排除できる
     let action = new Action(this.field.agents[agentIndex].agentId, actions.REMOVE, this.removeTarget[0], this.removeTarget[1], playerIndex);

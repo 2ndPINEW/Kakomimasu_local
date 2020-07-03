@@ -439,6 +439,9 @@ class Board{
     if(agentId != null)
       agentIndex = this.field.agentIndexFromId(agentId);
 
+    if(this.field.agents[agentIndex].lastActionTurn == turnNumber)
+      return false;
+
     //排除できる
     let action = new Action(this.field.agents[agentIndex].agentId, actions.REMOVE, this.removeTarget[0], this.removeTarget[1], playerIndex);
     if(isActionAppend)
@@ -468,17 +471,20 @@ class Board{
   }
 
   //排除可能判定が終わって複数エージェントが対象だった場合にUI表示
-  showCanRemoveExecAgentArea(x, y, playerIndex){
+  showCanRemoveExecAgentArea(x, y, playerIndex, turnNumber){
     for(let i = -1; i < 2; i++){
       for(let j = -1; j < 2; j++){
         if(!(i == 0 && j == 0)){
+          let agentIndex = this.field.agentIndex(x+i, y+j, playerIndex);
           if(playerIndex == 0){
-            if(this.field.tiles[y+j][x+i] == fieldNumber.p1Agent){
+            if(this.field.tiles[y+j][x+i] == fieldNumber.p1Agent &&
+              this.field.agents[agentIndex].lastActionTurn != turnNumber){
               this.setTiledColor(y+j, x+i, colors.suggestArea);
             }
           }
           if(playerIndex == 1){
-            if(this.field.tiles[y+j][x+i] == fieldNumber.p2Agent){
+            if(this.field.tiles[y+j][x+i] == fieldNumber.p2Agent &&
+              this.field.agents[agentIndex].lastActionTurn != turnNumber){
               this.setTiledColor(y+j, x+i, colors.suggestArea);
             }
           }
@@ -491,7 +497,10 @@ class Board{
   remove(x, y, playerIndex, turnNumber, isActionAppend = true){
     //周りの未操作エージェントが一つならすぐに排除
     //複数なら排除担当選択モードに以降
-    if(!this.canRemove(x, y, playerIndex, turnNumber)) return false;
+    if(!this.canRemove(x, y, playerIndex, turnNumber)){
+      this.resetAllTileColor();
+      return false;
+    }
     if(this.numberOfAroundNoOperatingAgents(x, y, playerIndex, turnNumber) == 1){
       //アクション内容のセット
       let agentIndex = this.field.agentIndex(this.tmpAgent[0], this.tmpAgent[1], playerIndex);
@@ -503,7 +512,6 @@ class Board{
       agent.lastActionTurn = turnNumber;
       this.field.backup.field.agents[agentIndex].lastActionType = actions.REMOVE;
 
-
       this._remove(x, y);
 
       this.resetAllTileColor();
@@ -512,9 +520,10 @@ class Board{
     else if(this.numberOfAroundNoOperatingAgents(x, y, playerIndex, turnNumber) > 1){
       this.removeTarget = [x, y];
       this.operatingMode = actions.REMOVEAGENTSELECT;
-      this.showCanRemoveExecAgentArea(x, y, playerIndex);
+      this.showCanRemoveExecAgentArea(x, y, playerIndex, turnNumber);
       return true;
     }
+    this.resetAllTileColor();
     return false;
   }
 
@@ -606,6 +615,7 @@ class Board{
     if(!this.canMove(x, y, playerIndex, agentIndex, ignoreEnemyWall)){
       this.operatingMode = actions.MOVE;
       //console.log("canMove false")
+      this.resetAllTileColor();
       return　false;
     }
     let position = [this.field.agents[agentIndex].x, this.field.agents[agentIndex].y]

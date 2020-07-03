@@ -478,7 +478,7 @@ class Board{
   showCanRemoveExecAgentArea(x, y, playerIndex, turnNumber){
     for(let i = -1; i < 2; i++){
       for(let j = -1; j < 2; j++){
-        if(!(i == 0 && j == 0)){
+        if(!(i == 0 && j == 0) && (x+i < this.w && y+j < this.h && x+i >= 0 && y+j >= 0)){
           let agentIndex = this.field.agentIndex(x+i, y+j, playerIndex);
           if(playerIndex == 0){
             if(this.field.tiles[y+j][x+i] == fieldNumber.p1Agent &&

@@ -6,50 +6,60 @@
   <title>kakomimasu</title>
 </head>
 <body>
-  <table>
+<div class="yokonarabi">
+<div id ='maintable'></div>
+  <div>
+    <table>
+      <tr>
+        <td><h4>操作モード</h4></td>
+        <td><h4 id = "mode">NONE</h4></td>
+      </tr>
+      <tr>
+        <td><h4>ターン</h4></td>
+        <td><h4 id = "turnPlayerName"></h4></td>
+      </tr>
+      <tr>
+        <td><h4>残りターン数</h4></td>
+        <td><h4 id = "turnNumber">Start</h4></td>
+      </tr>
+      <tr>
+        <td><h4>操作したコマの数</h4></td>
+        <td><h4 id = "numberOfOperations">0</h4></td>
+      </tr>
+      <tr>
+        <td><h4 id = "p1Name"></h4></td>
+        <td><h4 id = "p1Score">0</h4></td>
+      </tr>
+      <tr>
+        <td><h4 id = "p2Name"></h4></td>
+        <td><h4 id = "p2Score">0</h4></td>
+      </tr>
+      <tr>
+        <td><h4>メッセージ</h4></td>
+        <td><h4 id = "message">Welcom</h4></td>
+      </tr>
+      </table>
+    </div>
+  </div>
+  <table class="ui_area">
     <tr>
-      <td>
-        <h4 id ='maintable'></h4>
+      <td class="ui_area">
+        <input type="button" value="PUT" id="putModeSelectButton"/>
       </td>
-      <td>
-        <table>
-          <tr>
-            <td><h4>操作モード</h4></td>
-            <td><h4 id = "mode">NONE</h4></td>
-          </tr>
-          <tr>
-            <td><h4>ターン</h4></td>
-            <td><h4 id = "turnPlayerName"></h4></td>
-          </tr>
-          <tr>
-            <td><h4>残りターン数</h4></td>
-            <td><h4 id = "turnNumber">Start</h4></td>
-          </tr>
-          <tr>
-            <td><h4>操作したコマの数</h4></td>
-            <td><h4 id = "numberOfOperations">0</h4></td>
-          </tr>
-          <tr>
-            <td><h4 id = "p1Name"></h4></td>
-            <td><h4 id = "p1Score">0</h4></td>
-          </tr>
-          <tr>
-            <td><h4 id = "p2Name"></h4></td>
-            <td><h4 id = "p2Score">0</h4></td>
-          </tr>
-          <tr>
-            <td><h4>メッセージ</h4></td>
-            <td><h4 id = "message">Welcom</h4></td>
-          </tr>
-        </table>
+      <td class="ui_area">
+        <input type="button" value="MOVE" id="moveModeSelectButton"/>
+      </td>
+      <td class="ui_area">
+        <input type="button" value="REMOVE" id="removeModeSelectButton"/>
+      </td>
+      <td class="ui_area">
+        <input type="button" value="NONE" id="noneModeSelectButton"/>
+      </td>
+      <td class="ui_area">
+        <input type="button" value="次のターン" id="nextTurnButton"/>
       </td>
     </tr>
   </table>
-  <input type="button" value="PUT" id="putModeSelectButton"/>
-  <input type="button" value="MOVE" id="moveModeSelectButton"/>
-  <input type="button" value="REMOVE" id="removeModeSelectButton"/>
-  <input type="button" value="NONE" id="noneModeSelectButton"/>
-  <input type="button" value="次のターン" id="nextTurnButton"/>
   <div>遊び方</div>
   <div>1Pの人が操作して、操作完了後に"次のターン"ボタンを押して2Pに渡します</div>
   <div>2Pの人が操作した後に"次のターン"ボタンを押すと前回のターン終了時のフィールドが表示されます</div>
@@ -247,11 +257,13 @@
   }
 
   table{
+    padding: 16px;
     border: solid 1px;
     border-collapse: collapse;
-    width: 500px;
-    height: 300px;
+    width: 800px;
+    height: 800px;
   }
+
   table.field{
     border: solid 1px;
     border-collapse: collapse;
@@ -259,12 +271,48 @@
     height: 800px;
     width: 800px;
   }
+  table.ui_area{
+    border: none;
+    height: auto;
+  }
+  td.ui_area{
+    border: none;
+  }
   #agent_cell{
     background-image: url(./assets/agent.png);
     background-size: contain;
   }
+
   input{
-    width: 100px;
+    width: 156px;
     height: 50px;
+  }
+
+  /*-- PC版表示CSS  --*/
+  @media(min-width: 1201px){
+    .yokonarabi{
+      display:flex;
+      width:100%;
+      margin:0;
+    }
+  }
+
+  /*-- タブレット版表示CSS  --*/
+  @media (max-width: 1200px) and (min-width: 770px){
+    .yokonarabi{
+      display:flex;
+      width:100%;
+      margin:0;
+    }
+    table{
+      height: auto;
+    }
+  }
+
+  /*-- スマホ版表示CSS  --*/
+  @media (max-width: 769px){
+    table{
+      height: auto;
+    }
   }
 </style>

@@ -152,6 +152,7 @@
           }
           else{
             message += "にエージェント配置不可";
+            kkmm.board.resetAllTileColor();
           }
         }
         else if(kkmm.board.operatingMode == actions.MOVE){
@@ -160,6 +161,7 @@
           }
           else{
             message += "から移動不可";
+            kkmm.board.resetAllTileColor();
           }
         }
         else if(kkmm.board.operatingMode == actions.MOVING){
@@ -168,6 +170,7 @@
           }
           else{
             message += "に移動不可";
+            kkmm.board.resetAllTileColor();
           }
         }
         else if(kkmm.board.operatingMode == actions.REMOVE){
@@ -176,6 +179,7 @@
           }
           else{
             message += "は排除不可";
+            kkmm.board.resetAllTileColor();
           }
         }
         else if(kkmm.board.operatingMode == actions.REMOVEAGENTSELECT){
@@ -184,6 +188,7 @@
           }
           else{
             message += "のマスからは排除不可";
+            kkmm.board.resetAllTileColor();
           }
         }
 
